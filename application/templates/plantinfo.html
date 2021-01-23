@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+
+{% block pagestyles %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+{% endblock %}
+
+{% block content %}
+
+<!-- <style>
+    body {
+        background-image: url(/static/dist/img/purpleFlowers.png);
+        background-size: cover;
+        background-position-x:center;
+    }
+        h1 {color:white;}
+        li {color:rebeccapurple}
+    .infoList {
+        background-color: rgba(255, 255, 255, 0.5);
+        padding:25px 0;
+    }
+</style> -->
+
+<style>
+.infoList {
+	display: table;
+	width: 100%;
+
+}
+.infoList > ul {
+	display: table-row;
+}
+.infoList > ul:nth-child(2n) {
+	background-color: #eee;
+}
+.infoList > ul > li {
+	display: table-cell;
+	padding: 6px 8px;
+}
+
+	.infoList > ul > li:nth-child(1) {
+	}
+</style>
+
+{% if current_user.is_authenticated %}
+    <p>Hi {{ current_user.name }}!</p>
+
+<div class="container-fluid">
+<div class="row">
+    <div class="col">
+    <h1>{{body}}</h1>
+</div>
+</div>
+    <div class="row">
+        <div class="col">
+        <div class="infoList">
+        <!-- lists our plants -->
+        {% for list in display %}
+            <ul>
+                <li> {{ list.plantName }}</li>
+                <li> {{ list.sensorID }}</li>
+                <li>{{ list.sensorTime }} ----> {{ list.moistRead }}</li>
+            </ul>
+        {% endfor %}
+        </div>
+        </div>
+    </div>
+</div>
+
+       <!-- <a href="{{ url_for('auth_bp.logout_page') }}">Log out</a> -->
+    {% endif %}
+{% endblock %}

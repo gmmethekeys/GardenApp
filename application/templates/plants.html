@@ -1,0 +1,271 @@
+{% extends "layout.html" %}
+
+from sqlalchemy import create_engine
+
+{% block pagestyles %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+{% endblock %}
+
+{% block content %}
+
+<!-- <style>
+    body {
+        background-image: url(/static/dist/img/plantHeart.png);
+        background-size: cover;
+        background-position-x:center;
+    }
+    .plantList {
+        background-color: rgba(255, 255, 255, 0.5);
+        padding:25px 0;
+    }
+</style> -->
+
+<style>
+.plantList > ul {
+	list-style: none;
+	padding-left: 0;
+}
+
+	.plantList > ul > li:first-child {
+		font-size: 1.5em;
+		font-weight: 300;
+	}
+
+	.plantList > ul > li:nth-child(2) {
+		text-transform: uppercase;
+		font-size: 0.9em;
+		color: #333;
+	}
+
+	.plantList > ul > li:nth-child(3) {
+		font-size: 1.3em;
+		font-weight: 600;
+	}
+
+	.plantList > ul > li:nth-child(4) {
+		font-size: 0.7em;
+		color: #999;
+		font-style: italic;
+	}
+
+.thirst-1,
+.thirst-2,
+.thirst-3,
+.thirst-4 {
+	color: green;
+}
+
+.thirst-5,
+.thirst-6,
+.thirst-7 {
+	color: orange;
+}
+
+.thirst-8,
+.thirst-9 {
+	color: red;
+	animation: thirstDanger 1.0s infinite;
+}
+
+@keyframes thirstDanger {
+	0% {
+		opacity: 1.0
+	}
+
+	50% {
+		opacity: 0.5
+	}
+
+	100% {
+		opacity: 1.0
+	}
+}
+
+
+.infoList {
+	display: table;
+	width: 100%;
+
+}
+.infoList > ul {
+	display: table-row;
+}
+.infoList > ul:nth-child(2n) {
+	background-color: #eee;
+}
+.infoList > ul > li {
+	display: table-cell;
+	padding: 6px 8px;
+}
+
+	.infoList > ul > li:nth-child(1) {
+	}
+</style>
+
+
+    <!-- Beginning of container for Bootstrap -->
+<div class="container">
+    <div class="row">
+        <div class="col">
+
+       <!-- Title is created on auth.py -->
+        <style>
+            h1 {color:white;}
+            p1 {color:white;}
+        </style>
+        <h1>{{title}}</h1>
+
+        <!-- Lists the logged in user's name -->
+        {% if current_user.is_authenticated %}
+        <p1>Hi {{ current_user.name }}!</p1>
+
+
+        <!-- <p>Your userID is {{ current_user.id }}.</p> -->
+        </div>
+
+
+        <div class="col">
+            <p> {{ body }} </p>
+        </div>
+    </div>
+        <div class="row">
+            <div class="col">
+
+            <div class="plantList">
+            <!-- lists our plants -->
+            {% for plant in plants %}
+                <ul plantID="plants.id">
+                    <li>{{ plant.plantName }}</li>
+                    <li>{{ plant.plantType }}</li>
+                    <li class="thirst-{{ plant.plantThirst }}">Thirst Level: {{ plant.plantThirst }}</li>
+                    <li>Sensor ID: {{ plant.sensorID }}</li>
+                <p>------------------------------------</p>
+                </ul>
+            {% endfor %}
+            </div>
+
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+  Delete a Plant
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Delete a Plant</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+         <!-- The start of our form to create a new plant -->
+            <div class="formwrapper">
+                <form method=post>
+                    {% for message in get_flashed_messages() %}
+                        <div class="alert alert-warning">
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                    <h1>Delete Plant</h1>
+                    <div class="plantName1">
+                        {{ form.plantName(placeholder='Kitchen Window Cactus') }}
+                    <p>Delete a plant by typing the name and pressing submit.</p>
+                        {% if form.plantName.errors %}
+                            <ul class="errors">
+                                {% for error in form.plantName.errors %}<li>{{ error }}</li>{% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                    <div class="submitbutton">
+                        <input id="delete" type="submit" value="Submit">
+                    </div>
+                </form>
+            </div>
+      </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+            <div class="col">
+
+
+            <!-- The start of our form to create a new plant -->
+            <div class="formwrapper">
+                <form method=post>
+                    <div class="logo">
+                        <img src="{{ url_for('static', filename='dist/img/flavicon.png') }}" class="img-fluid" alt="Responsive image" style="width: 50%; height: 50%">
+                    </div>
+
+                    {% for message in get_flashed_messages() %}
+                        <div class="alert alert-warning">
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                    <h1>Create Plant</h1>
+                    <div class="plantName">
+                        {{ form.plantName(placeholder='Kitchen Window Cactus') }}
+                        {% if form.plantName.errors %}
+                            <ul class="errors">
+                                {% for error in form.plantName.errors %}<li>{{ error }}</li>{% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                    <div class="plantType">
+                        {{ form.plantType(placeholder='Mini Prickly Pear') }}
+                        {% if form.plantType.errors %}
+                            <ul class="errors">
+                                {% for error in form.plantType.errors %}<li>{{ error }}</li>{% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                    <div class="plantThirst">
+                        {{ form.plantThirst(placeholder='1-10') }}
+                        {% if form.plantThirst.errors %}
+                            <ul class="errors">
+                                {% for error in form.plantThirst.errors %}<li>{{ error }}</li>{% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                    <div class="sensorID">
+                        {{ form.sensorID(placeholder='1-100') }}
+                        {% if form.sensorID.errors %}
+                            <ul class="errors">
+                                {% for error in form.sensorID.errors %}<li>{{ error }}</li>{% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+
+                    <div class="submitbutton">
+                        <input id="submit" type="submit" value="Submit">
+                    </div>
+                </form>
+            </div>
+
+
+            </div>
+
+
+
+
+        </div>
+  <!--  <div class="row">
+        <div class="col">
+        <a href="{{ url_for('auth_bp.logout_page') }}">Log out</a>
+        </div>
+    </div> -->
+</div>
+        {% endif %}
+{% endblock %}
